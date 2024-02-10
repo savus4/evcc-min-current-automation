@@ -13,7 +13,7 @@ phases_configured_topic = "evcc/loadpoints/1/phasesActive"
 
 logging.basicConfig(level=logging.INFO)
 
-def on_connect(client, userdata, flags, rc):
+def on_connect(client, userdata, flags, rc, properties):
     logging.info("Connected with result code " + str(rc))
     client.subscribe(min_current_topic)
     client.subscribe(phases_configured_topic)
@@ -33,7 +33,7 @@ def on_message(client, userdata, msg):
             logging.info(f"Changed minCurrent to {min_current_3_phases}A.")
             last_configured_phase = "3"
 
-client = mqtt.Client()
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 client.on_connect = on_connect
 client.on_message = on_message
 
