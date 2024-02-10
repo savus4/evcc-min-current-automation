@@ -1,0 +1,9 @@
+[Unit]
+Description=evcc Minimum Current Automation
+After=network.target
+
+[Service]
+ExecStart=/path/to/python/in/virtual-environment/python3 /path/to/script/main.py
+
+[Install]
+WantedBy=multi-user.target
