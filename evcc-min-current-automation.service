@@ -1,9 +1,14 @@
 [Unit]
 Description=evcc Minimum Current Automation
-After=network.target
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 ExecStart=/path/to/python/in/virtual-environment/python3 /path/to/script/main.py
+WorkingDirectory=/path/to/script
+Restart=always
+RestartSec=5
+StartLimitIntervalSec=0
 
 [Install]
 WantedBy=multi-user.target
