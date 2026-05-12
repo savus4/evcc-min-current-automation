@@ -21,7 +21,7 @@ reconnect_max_delay = int(os.getenv("MQTT_RECONNECT_MAX_DELAY_SECONDS", "60"))
 
 # evcc topics
 min_current_topic = "evcc/loadpoints/1/minCurrent"
-phases_configured_topic = "evcc/loadpoints/1/phasesActive"
+phases_configured_topic = "evcc/loadpoints/1/phasesConfigured"
 
 if reconnect_min_delay < 1:
     reconnect_min_delay = 1
