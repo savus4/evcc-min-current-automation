@@ -21,7 +21,7 @@ reconnect_max_delay = int(os.getenv("MQTT_RECONNECT_MAX_DELAY_SECONDS", "60"))
 
 # evcc topics
 min_current_topic = "evcc/loadpoints/1/minCurrent"
-phases_configured_topic = "evcc/loadpoints/1/phasesConfigured"
+phases_active_topic = "evcc/loadpoints/1/phasesActive"
 
 if reconnect_min_delay < 1:
     reconnect_min_delay = 1
@@ -32,10 +32,10 @@ if reconnect_max_delay < reconnect_min_delay:
 def on_connect(client, userdata, flags, rc, properties):
     logger.info("Connected with result code %s", rc)
     client.subscribe(min_current_topic)
-    client.subscribe(phases_configured_topic)
+    client.subscribe(phases_active_topic)
     logger.info("Subscribed to evcc topics.")
 
-last_configured_phase = None
+last_active_phase = None
 
 
 def on_disconnect(client, userdata, flags, rc, properties):
@@ -56,9 +56,9 @@ def publish_min_current(client, value):
 
 
 def on_message(client, userdata, msg):
-    global last_configured_phase
+    global last_active_phase
 
-    if msg.topic != phases_configured_topic:
+    if msg.topic != phases_active_topic:
         return
 
     try:
@@ -67,12 +67,13 @@ def on_message(client, userdata, msg):
         logger.warning("Cannot decode payload on %s: %r", msg.topic, msg.payload)
         return
 
-    if phase == "1" and last_configured_phase != "1":
+    # Only phase changes set the minimum, preserving manual GUI overrides.
+    if phase == "1" and last_active_phase != "1":
         publish_min_current(client, min_current_1_phase)
-        last_configured_phase = "1"
-    elif phase == "3" and last_configured_phase != "3":
+        last_active_phase = "1"
+    elif phase == "3" and last_active_phase != "3":
         publish_min_current(client, min_current_3_phases)
-        last_configured_phase = "3"
+        last_active_phase = "3"
     elif phase not in {"1", "3"}:
         logger.warning("Unexpected phase payload on %s: %r", msg.topic, phase)
 

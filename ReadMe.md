@@ -3,6 +3,11 @@
 Minimum current is changed depending on if a loadpoint is charging with 1 or 3 phases.
 This is helpful for vehicles which need a certain minimum current to charge properly, like the Renault Twingo.
 
+The script follows `evcc/loadpoints/1/phasesActive`, so it also works with automatic phase switching.
+It sets the minimum current on the first active-phase message after startup and whenever the active phase count changes:
+6 A for 1 phase and 8 A for 3 phases by default.
+Manual minimum-current changes in the evcc GUI are preserved until the next active-phase change or automation restart.
+
 You probably want to set up the script as a systemd service, e.g. if you use it on a Raspberry Pi.
 
 [mqtt](https://docs.evcc.io/docs/reference/configuration/mqtt) must be configured in evcc.
